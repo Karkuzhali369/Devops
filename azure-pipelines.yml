@@ -1,33 +1,33 @@
 trigger:
-- main   # 👈 change if your branch is named 'master' or something else
+- main   # 👈 change to your actual branch name if needed (e.g. master)
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# Step 1: Checkout code
+# Step 1 – Checkout your repo
 - checkout: self
 
-# Step 2: Set up Java 21
-- task: UseJavaVersion@1
+# Step 2 – Install and use Java 21
+- task: JavaToolInstaller@0
   inputs:
     versionSpec: '21'
     jdkArchitecture: 'x64'
-    jdkSourceOption: 'PreInstalled'  # Uses the agent's built-in JDK 21
+    jdkSourceOption: 'PreInstalled'   # use built-in JDK 21 on Microsoft agents
 
-# Step 3: Build with Maven
+# Step 3 – Build with Maven
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
     goals: 'clean package'
     mavenOptions: '-Xmx3072m'
     javaHomeOption: 'Path'
-    jdkVersionOption: '1.21'   # 👈 Important: Set to Java 21
+    jdkVersionOption: '1.21'   # 👈 match your JDK version
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
 
-# Step 4: (Optional) Publish build artifacts (like .jar or .war)
+# Step 4 – (Optional) Publish artifacts
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: 'target'
